@@ -36,12 +36,15 @@
       <!-- Content -->
       <div>
         <label class="block text-gray-700 font-medium mb-2 mt-2">Content</label>
-        <textarea
+        <!-- <textarea
           v-model="form.body"
           class="w-full border rounded-lg px-4 py-2 h-40 resize-none"
           required
-        ></textarea>
+        ></textarea> -->
+        <QuillEditor v-model:content="form.body" />
       </div>
+
+      
 
       <!-- Category -->
       <div>
@@ -56,6 +59,7 @@
             v-for="category in categories"
             :key="category.id"
             :value="category.id"
+            
           >
             {{ category.name }}
           </option>
@@ -131,6 +135,10 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
+import QuillEditor from '@/components/admin/forms/FormElements/TextEditor.vue'
+
+
+
 
 const isLoading = ref(false)
 
@@ -243,7 +251,18 @@ const handleSubmit = async () => {
   // }
 
   if (isEdit.value) {
-    await axios.post(`http://127.0.0.1:8000/api/posts/${route.params.id}?_method=PUT`, formData)
+    try {
+        isLoading.value=true
+        const res = await axios.patch(`http://127.0.0.1:8000/api/posts/${route.params.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        isLoading.value=false
+        toast.success('✅ Post created successfully!')
+        resetForm()
+      } catch (err) {
+        toast.error('❌ Failed to create post.')
+        console.error(err)
+      }
   }
   else {
 
