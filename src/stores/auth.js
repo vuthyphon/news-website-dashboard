@@ -41,15 +41,18 @@ export const useAuthStore = defineStore('auth', {
         router.push('/admin');
       } catch (error) {
         console.error('Login failed:', error);
-        this.loginError = error.response?.data?.message || 'Invalid credentials';
-        this.logout(); // Ensure state is cleared on failed login
+        //this.loginError = error.response?.data?.message || 'Invalid credentials';
+        //this.logout(); // Ensure state is cleared on failed login
       }
     },
-    logout() {
+    async logout() {
       this.user = null;
       this.token = null;
       this.isLoggedIn = false;
       this.loginError = null;
+
+       // If using Laravel Sanctum
+      await axios.post('http://127.0.0.1:8000/api/logout') // Optional: for Sanctum logout
 
       // Clear from localStorage
       localStorage.removeItem('token');
@@ -59,7 +62,7 @@ export const useAuthStore = defineStore('auth', {
       delete axios.defaults.headers.common['Authorization'];
 
       // Redirect to login page
-      router.push('/login');
+      //router.push('/login');
     },
     // Action to initialize authentication state from localStorage on app load
     initializeAuth() {

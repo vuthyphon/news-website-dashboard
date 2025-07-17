@@ -36,6 +36,21 @@ const routes = [
         component: () => import('@admin/Ecommerce.vue'),
       },
       {
+        path: '/posts', // /admin
+        name: 'posts',
+        component: () => import('@admin/Posts/AllPost.vue'),
+      },
+      {
+        path: '/posts/add', // /admin
+        name: 'add-posts',
+        component: () => import('@admin/Posts/AddPost.vue'),
+      },
+      {
+        path: '/posts/:id/edit',
+        name: 'PostEdit',
+        component: () => import('@admin/Posts/AddPost.vue'),
+      },
+      {
       path: '/calendar',
       name: 'Calendar',
       component: () => import('@admin/Others/Calendar.vue'),

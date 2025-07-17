@@ -40,7 +40,7 @@
                 </p>
               </div>
               <div>
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+                <!-- <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
                   <button
                     class="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10"
                   >
@@ -98,7 +98,15 @@
                       >Or</span
                     >
                   </div>
-                </div>
+                 
+                </div> -->
+                 <Alert
+                      v-if="errorMessage"
+                      variant="warning"
+                      title="Login Fail"
+                      message="Invalid username or password"
+                      :showLink="false"
+                  />
                 <form @submit.prevent="handleSubmit">
                   <div class="space-y-5">
                     <!-- Email -->
@@ -274,6 +282,8 @@
 import { ref } from 'vue'
 import CommonGridShape from '@/components/admin/common/CommonGridShape.vue'
 import FullScreenLayout from '@/components/admin/layout/FullScreenLayout.vue'
+import Alert from '@/components/admin/ui/Alert.vue'
+
 
 import { useAuthStore } from '@/stores/auth';
 
@@ -282,6 +292,8 @@ const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const keepLoggedIn = ref(false)
+const errorMessage = ref(false)
+
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
@@ -294,7 +306,13 @@ const handleSubmit = async() => {
   //   password: password.value,
   //   keepLoggedIn: keepLoggedIn.value,
   // })
-    await authStore.login({ email: email.value, password: password.value });
+ await authStore.login({ email: email.value, password: password.value });
+ if(!authStore.user)
+ {
+    errorMessage.value = true
+    console.log("invalid login")
+ }
+
 
 }
 </script>

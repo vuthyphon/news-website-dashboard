@@ -249,8 +249,11 @@ const menuGroups = [
       },
       {
         icon: CalenderIcon,
-        name: "Calendar",
-        path: "/calendar",
+        name: "Posts",
+        subItems: [
+          { name: "All Posts", path: "/posts", pro: false },
+          { name: "Create Post", path: "posts/add", pro: false }
+        ],
       },
       {
         icon: UserCircleIcon,
