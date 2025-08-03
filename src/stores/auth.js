@@ -21,7 +21,7 @@ export const useAuthStore = defineStore('auth', {
         this.loginError = null; // Clear previous errors
 
         // Simulate API call - replace with your actual backend endpoint
-        const response = await axios.post('http://127.0.0.1:8000/api/login', credentials);
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, credentials);
 
         const { user, token } = response.data;
 
@@ -52,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
       this.loginError = null;
 
        // If using Laravel Sanctum
-      await axios.post('http://127.0.0.1:8000/api/logout') // Optional: for Sanctum logout
+      await axios.post(`${import.meta.env.VITE_API_URL}/logout`) // Optional: for Sanctum logout
 
       // Clear from localStorage
       localStorage.removeItem('token');
