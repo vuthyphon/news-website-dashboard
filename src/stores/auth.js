@@ -38,7 +38,7 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         // Redirect to a protected dashboard or home page
-        router.push('/admin');
+        router.push('/admin/dashboard');
       } catch (error) {
         console.error('Login failed:', error);
         //this.loginError = error.response?.data?.message || 'Invalid credentials';

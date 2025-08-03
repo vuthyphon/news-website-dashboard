@@ -1,5 +1,7 @@
 <template>
 <div class="max-w-screen-xl mx-auto px-4">
+  <Loading :active="isLoading" :can-cancel="false" :is-full-page="true" />
+
 
   <div class="flex justify-between mt-20">
     <div class="mx-auto table text-center text-sm">
@@ -69,12 +71,16 @@ export default {
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
 import BlockNewsCard from '@/views/public/home/BlocksNewsCard.vue';
 import BlocksNewRight from '@/views/public/home/BlocksNewRight.vue';
 import HeroSection from '@/views/public/home/HeroSection.vue';
 import BlocksNewsCardList from '@/views/public/home/BlocksNewsCardList.vue';
 import NewTicker from '@/views/public/home/NewsTicker.vue';
+
+const isLoading = ref(false)
 
 const recentPosts = ref([]);
 const firstPost =ref([]);
@@ -84,8 +90,10 @@ const newsTickers=ref([]);
 const fetchPosts = async () => {
   try {
     //const res = await axios.get("http://127.0.0.1:8000/api/articles");
+   isLoading.value=true;
     const res = await axios.get(`${import.meta.env.VITE_API_URL}/articles`);
     if (res?.data) {
+      isLoading.value=false;
       recentPosts.value = res.data.posts;
       newsTickers.value=res.data.news_tickers;
       // ✅ បែងចែកអត្ថបទ
@@ -95,6 +103,7 @@ const fetchPosts = async () => {
     }
   } catch (err) {
     console.error("Error fetching posts:", err);
+    isLoading.value=false;
   }
 };
 

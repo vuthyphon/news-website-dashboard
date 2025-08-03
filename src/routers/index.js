@@ -36,12 +36,12 @@ const routes = [
         component: () => import('@admin/Ecommerce.vue'),
       },
       {
-        path: '/posts', // /admin
+        path: 'posts', // /admin
         name: 'posts',
         component: () => import('@admin/Posts/AllPost.vue'),
       },
       {
-        path: '/posts/add', // /admin
+        path: 'posts/add', // /admin
         name: 'add-posts',
         component: () => import('@admin/Posts/AddPost.vue'),
       },
@@ -51,7 +51,7 @@ const routes = [
         component: () => import('@admin/Posts/UpdatePost.vue'),
       },
       {
-        path: '/categories',
+        path: 'categories',
         name: 'Categories',
         component: () => import('@admin/Category/AllCategory.vue'),
         meta: {
@@ -59,7 +59,7 @@ const routes = [
         },
       },
       {
-        path: '/tags',
+        path: 'tags',
         name: 'Tags',
         component: () => import('@admin/Tags/AllTag.vue'),
         meta: {
@@ -83,7 +83,7 @@ const routes = [
       },
     },
     {
-      path: '/users',
+      path: 'users',
       name: 'Users',
       component: () => import('@admin/Users/AllUsers.vue'),
       meta: {

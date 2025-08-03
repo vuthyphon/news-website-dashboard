@@ -1,5 +1,6 @@
 <template>
     <div class="max-w-screen-xl container mx-auto px-4">
+         <Loading :active="isLoading" :can-cancel="false" :is-full-page="true" />
         <div class="bg-gray-50 py-20">
             <div class="xl:container mx-auto px-3 sm:px-4 xl:px-2">
                 <div class="flex flex-row flex-wrap">
@@ -207,8 +208,10 @@ import Author from '@public/posts/Author.vue';
 import { ref,onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
-import { Key } from 'lucide-vue-next';
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
+const isLoading = ref(false)
 let imgPath=import.meta.env.VITE_IMAGE_PATH;
 
 const route = useRoute();
@@ -233,6 +236,7 @@ onMounted(() => {
 
 const fetchPost = async (id) => {
   try {
+    isLoading.value=true
     const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/articles/${id}`)
 
     post.value = {
@@ -246,6 +250,8 @@ const fetchPost = async (id) => {
       author:data.author ?? [],
       images:data.images ?? []
     }
+
+    isLoading.value=false
 
 
     // Images preview (array of image URLs)
@@ -267,6 +273,7 @@ const fetchPost = async (id) => {
 
   } catch (error) {
     console.error('Failed to fetch post:', error)
+    isLoading.value=false
     // Optional: show error toast or message
   }
 }

@@ -9,15 +9,21 @@
         <!-- 🔳 Featured Blog (Right) -->
         <div class="flex w-full md:w-1/3 flex-shrink-0 gap-3">
           <div class="bg-white shadow overflow-hidden flex flex-col gap-4 p-1" v-for="(p,idx) in firstPost" :key="idx">
-            <img
-              :src="imgPath+'/'+p.thumbnail"
-              alt="Featured News"
-              class="w-full h-64 object-cover sm:flex-1/2"
-            />
-            <div class="sm:flex-1/2">
+            <router-link :to="`article/detail/${p.id}`">
+                 <img
+                    :src="imgPath+'/'+p.thumbnail"
+                    alt="Featured News"
+                    class="w-full h-64 object-cover sm:flex-1/2"
+                />
+            </router-link>
+           
+             <router-link :to="`article/detail/${p.id}`">
+              <div class="sm:flex-1/2">
               <h2 class="text-md font-bold text-gray-800">{{ p.title }}</h2>
-              <p class="mt-2 text-gray-600" v-html="truncate(p.body,200)"></p>
+              <p class="mt-2 text-gray-600 text-sm" v-html="truncate(p.body,200)"></p>
             </div>
+             </router-link>
+            
           </div>
         </div>
         <!-- 📋 News List (Left) -->
@@ -27,9 +33,15 @@
             :key="index"
             class="flex flex-row bg-white p-1 border-b-2 border-gray-100 overflow-hidden"
           >
-            <img :src="imgPath+'/'+item.thumbnail" alt="News Image" class="w-24 h-24 object-cover flex-shrink-0"/>
+          <router-link :to="`article/detail/${item.id}`">
+               <img :src="imgPath+'/'+item.thumbnail" alt="News Image" class="w-24 h-24 object-cover flex-shrink-0"/>
+          </router-link>
+           
             <div class="p-2 flex-1 ">
-              <h3 class="text-md font-semibold text-gray-800">{{ item.title }}</h3>
+               <router-link :to="`article/detail/${item.id}`">
+                <h3 class="text-md font-semibold text-gray-800">{{ item.title }}</h3>
+               </router-link>
+              
               <!-- <p class="text-gray-600 mt-1">{{ item.body }}</p> -->
             </div>
           </div>
@@ -40,9 +52,9 @@
       </div>
     </div>
     <!-- Right Side (Advertisement) -->
-    <div class="hidden md:block md:w-1/5">
+    <div class="md:block md:w-1/5">
       <div class="bg-gray-100 h-full flex items-center justify-center p-4 rounded shadow">
-        <span class="text-gray-500 text-center">Advertisement</span>
+        <span class="text-gray-500 text-center">Advertisement Here</span>
       </div>
     </div>
   </div>

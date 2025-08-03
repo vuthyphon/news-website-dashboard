@@ -251,7 +251,7 @@ const menuGroups = [
         icon: CalenderIcon,
         name: "Posts",
         subItems: [
-          { name: "All Posts", path: "/posts", pro: false },
+          { name: "All Posts", path: "/admin/posts", pro: false },
           { name: "Create Post", path: "posts/add", pro: false }
         ],
       },
@@ -259,14 +259,14 @@ const menuGroups = [
         icon: ListIcon,
         name: "Setting",
         subItems: [
-          { name: "Categories", path: "/categories", pro: false },
-          { name: "Tags", path: "/tags", pro: false }
+          { name: "Categories", path: "/admin/categories", pro: false },
+          { name: "Tags", path: "/admin/tags", pro: false }
         ],
       },
       {
         icon: UserCircleIcon,
         name: "Users",
-        path: "/users",
+        path: "/admin/users",
       },
       // ... Add other menu items here
     ],
