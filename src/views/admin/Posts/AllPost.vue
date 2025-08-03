@@ -2,7 +2,7 @@
   <AdminLayout>
     <PageBreadcrumb :pageTitle="currentPageTitle" />
     <div class="space-y-5 sm:space-y-6">
-      <ComponentCard title="Basic Table 1">
+      <ComponentCard>
         <PostTable :posts="posts" />
       </ComponentCard>
     </div>
@@ -23,9 +23,6 @@ const currentPageTitle = ref("All Post");
 
 const posts= ref([]);
 
-
-
-
 // for edit post
 onMounted(() => {
   fetchPosts()
@@ -35,7 +32,7 @@ onMounted(() => {
 const fetchPosts = async (id) => {
   try
   {
-    const res  = await axios.get(`http://127.0.0.1:8000/api/posts`)
+    const res  = await axios.get(`${import.meta.env.VITE_API_URL}/posts`)
     if(res)
     {
         posts.value=res.data

@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount,watch } from 'vue'
 
 const props = defineProps({
   options: {
@@ -163,4 +163,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+// ➕ ADD THIS
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    selectedItems.value = [...newValue] // clone to trigger reactivity
+  },
+  { immediate: true } // run on first mount
+)
+
+
+
 </script>

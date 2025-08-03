@@ -70,7 +70,7 @@
 
       <div>
          <label class="block text-gray-700 font-medium mb-2 mt-2">Tags</label>
-        <MultipleSelect :options="tags"  v-model="selectedTags" :modelValue="modelValue"></MultipleSelect>
+        <MultipleSelect :options="tags"  v-model="selectedTags"></MultipleSelect>
       </div>
     
     <div>
@@ -106,6 +106,36 @@
           </button>
         </div>
       </div>
+      <!-- OLD images from DB -->
+      <div v-if="oldImages.length" class="mt-4 flex flex-wrap gap-4">
+      <div v-for="(img, idx) in oldImages" :key="idx" class="relative">
+        <img :src="img.url" class="w-40 rounded-xl" />
+        <button
+          type="button"
+          @click="removeOldImage(img.id)"
+          class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+          title="Remove from server"
+        >
+          &times;
+        </button>
+      </div>
+</div>
+
+          <!-- NEW uploaded images (not yet saved) -->
+          <!-- <div v-if="imagePreview.length" class="mt-4 flex flex-wrap gap-4">
+            <div v-for="(img, idx) in imagePreview" :key="'new-' + idx" class="relative">
+              <img :src="img" class="w-40 rounded-xl" />
+              <button
+                type="button"
+                @click="removeNewImage(idx)"
+                class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                title="Remove"
+              >
+                &times;
+              </button>
+            </div>
+          </div> -->
+
 
       <!-- Submit -->
       <div>
@@ -137,9 +167,7 @@ import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/css/index.css'
 import QuillEditor from '@/components/admin/forms/FormElements/TextEditor.vue'
 
-
-
-
+const quillEditor = ref(null)
 const isLoading = ref(false)
 
 const currentPageTitle = ref('Create Post') // form title here
@@ -169,6 +197,7 @@ const form = ref({
 const categories = ref([])
 const tags = ref([])
 const imagePreview = ref(null)
+const oldImages=ref([])
 const selectedTags = ref([])
 const tagId = ref([])
 const modelValue =ref([]) // get selected tag
@@ -176,7 +205,7 @@ const modelValue =ref([]) // get selected tag
 
 
 const fetchMeta = async () => {
-  const response = await axios.get('http://127.0.0.1:8000/api/articles/meta')
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/articles/meta`)
   categories.value = response.data.data.categories
   tags.value=response.data.data.tags
  
@@ -184,39 +213,47 @@ const fetchMeta = async () => {
 
 }
 
+
 const fetchPost = async (id) => {
-  const { data } = await axios.get(`http://127.0.0.1:8000/api/posts/${id}`)
-  form.value = {
-    title: data.title,
-    // slug: data.slug,
-    body: data.body,
-    category_id: parseInt(data.category.id),
-    //selectedTags: data.tags.map(t => t.id),
-    image: data.thumbnail, // leave empty
+  try {
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${id}`)
+
+    form.value = {
+      title: data?.title ?? '',
+      // slug: data?.slug ?? '',
+      body: data?.body ?? '',
+      category_id: parseInt(data?.category?.id) || null,
+      image: data?.thumbnail ?? '',
+    }
+
+    // Thumbnail preview
+    thumbnailPreview.value = data?.thumbnail
+      ? `${import.meta.env.VITE_IMAGE_PATH}/${data.thumbnail}`
+      : ''
+
+    // Images preview (array of image URLs)
+    oldImages.value = Array.isArray(data?.images)
+  ? data.images.map(file => ({
+      id: file.id,
+      image_path: file.image_path,
+      url: `${import.meta.env.VITE_IMAGE_PATH}/${file.image_path}`
+    }))
+  : []
+
+    // Tags selected (for multi-select)
+    selectedTags.value = Array.isArray(data?.tags)
+      ? data.tags.map(tag => ({
+          value: tag?.value ?? tag?.id ?? null,
+          label: tag?.label ?? tag?.name ?? '',
+        }))
+      : []
+
+  } catch (error) {
+    console.error('Failed to fetch post:', error)
+    // Optional: show error toast or message
   }
-  thumbnailPreview.value="http://127.0.0.1:8000/storage/"+data.thumbnail;
-  imagePreview.value = data.images.map(file => "http://127.0.0.1:8000/storage/"+file.image_path)
-  //tags.value = data.tags
-
-      //form.value.category_id= data.category.id || '', // ជាទូទៅ postData មកពី backend
-  
-  //console.log(form.value.category_id)
-
-  //  form.selectedTags.value = data.tags.value.filter(tag =>
-  //   data.tags.some(t => t.id === tag.id)
-  // )
-  //selectedTags.value=data.tags.map(t => t.id);
-  modelValue.value=data.tags;
-  selectedTags.value=data.tags;
-  //console.log(modelValue.value)
 }
 
-const generateSlug = () => {
-  form.value.slug = form.value.title
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-}
 
 function handleThumbnail(event) {
   thumbnail.value = event.target.files[0]
@@ -225,7 +262,9 @@ function handleThumbnail(event) {
 
 const handleMultipleImageChange = (e) => {
     images.value = Array.from(e.target.files)
-    imagePreview.value = images.value.map(file => URL.createObjectURL(file))
+    const newImages = Array.from(e.target.files)
+    const newPreviews = newImages.map(file => URL.createObjectURL(file))
+    imagePreview.value = newPreviews
 }
 
 const removeImage = (idx) => {
@@ -233,75 +272,96 @@ const removeImage = (idx) => {
   imagePreview.value.splice(idx, 1)
 }
 
+// const removeNewImage = (index) => {
+//   images.value.splice(index, 1)
+//   imagePreview.value.splice(index, 1)
+// }
+
+const removeOldImage = async (id) => {
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/post-images/${id}`)
+
+    // Remove from oldImages array
+    oldImages.value = oldImages.value.filter(img => img.id !== id)
+
+    toast.success("🗑️ Image removed.")
+  } catch (err) {
+    toast.error("❌ Failed to remove image.")
+    console.error(err)
+  }
+}
+
+
 function testTost(){
   toast.success('✅ Post created successfully!')
 }
 
+
 const handleSubmit = async () => {
-  
   const tagIds = selectedTags.value.map(tag => tag.value)
+
   const formData = new FormData()
-  formData.append('title', form.value.title)
-  formData.append('slug', form.value.slug)
-  formData.append('body', form.value.body)
-  formData.append('category_id', form.value.category_id)
-  formData.append('tags',tagIds)
-  formData.append('thumbnail',thumbnail.value)
+  formData.append('title', form.value.title ?? '')
+  formData.append('slug', form.value.slug ?? '')
+  formData.append('body', form.value.body ?? '')
+  formData.append('category_id', form.value.category_id ?? '')
 
-  images.value.forEach(file => {
-    formData.append('images[]', file)
+  // Append tag IDs as array (tags[])
+  tagIds.forEach(id => {
+    formData.append('tags[]', id)
   })
-  
-  // if (form.value.image) {
-  //   formData.append('thumbnail', form.value.image)
-  // }
 
-  if (isEdit.value) {
-    try {
-        isLoading.value=true
-        const res = await axios.patch(`http://127.0.0.1:8000/api/posts/${route.params.id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
-        isLoading.value=false
-        toast.success('✅ Post created successfully!')
-        resetForm()
-      } catch (err) {
-        toast.error('❌ Failed to create post.')
-        isLoading.value=false
-        console.error(err)
-      }
+  // Append new thumbnail if changed
+  if (thumbnail.value instanceof File) {
+    formData.append('thumbnail', thumbnail.value)
   }
-  else {
 
-      try {
-        isLoading.value=true
-        const res = await axios.post('http://127.0.0.1:8000/api/posts', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
-        isLoading.value=false
-        toast.success('✅ Post created successfully!')
-        resetForm()
-      } catch (err) {
-         isLoading.value=false
-        toast.error('❌ Failed to create post.')
-        
-        console.error(err)
+  // Append new images if any
+  if (images.value.length > 0) {
+    images.value.forEach(file => {
+      formData.append('images[]', file)
+    })
+  }
+
+  try {
+    isLoading.value = true
+
+    // Use POST with _method=PATCH for Laravel compatibility
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/posts/${route.params.id}`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        params: { _method: 'PATCH' }
       }
-    }
-    
-  
+    )
 
-  //router.push('/admin/posts')
+    toast.success('✅ Post updated successfully!')
+    resetForm()
+  } catch (err) {
+    toast.error('❌ Failed to update post.')
+    console.error(err)
+  } finally {
+    isLoading.value = false
+  }
 }
 
-// reset form after success
+const resetForm = () => {
+  form.value = {
+    title: '',
+    slug: '',
+    body: '',
+    category_id: null,
+    image: ''
+  }
 
-function resetForm() {
-  form.value = { title: '', slug: '', body: '', category_id: '', tags: '' }
-  images.value = []
+  selectedTags.value = []
   thumbnail.value = null
+  thumbnailPreview.value = ''
+  images.value = []
   imagePreview.value = []
-  thumbnailPreview.value = null
+
+ 
 }
 
 // for edit post

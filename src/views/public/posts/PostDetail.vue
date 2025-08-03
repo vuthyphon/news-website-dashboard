@@ -6,16 +6,29 @@
                     <!-- Left -->
                     <div class="flex-shrink max-w-full w-full lg:w-2/3 overflow-hidden">
                         <div class="w-full py-3 mb-3">
-                            <h2 class="text-gray-800 text-3xl font-bold">
+                            <h2 class="text-gray-800 text-xl font-bold">
                                 <span class="inline-block h-5 border-l-3 border-red-600 mr-2"></span>
-                                5 Tips to Save Money Booking Your Next Hotel Room
+                                {{post.title}}
                             </h2>
                         </div>
+                        
                         <div class="flex flex-row flex-wrap -mx-3">
                             <div class="max-w-full w-full px-4">
+                                <div class="mb-2"><p class="text-error-700 text-md">{{ post.category.name_kh || '' }} / <span v-for="(tag,ind) in post.tags" :key="ind"> {{ tag.label }} / </span> <span class="text-amber-600">{{ post.created_at }}</span></p></div>
+                                <figure class="text-center mb-6">
+                                        <img class="max-w-full h-auto" :src="imgPath+'/'+post.thumbnail" alt="Image description" />
+                                        <!-- <figcaption>Type here your description</figcaption> -->
+                                    </figure>
                                 <!-- Post content -->
                                 <div class="leading-relaxed pb-4">
-                                    <p class="mb-5">
+
+                                   <div v-html="post.body" class="mb-2"></div>
+
+                                    <figure class="text-center mb-2" v-for="(img,idx) in post.images" :key="idx">
+                                        <img class="max-w-full h-auto" :src="imgPath+'/'+img.image_path" alt="Image description" />
+                                        <!-- <figcaption>Type here your description</figcaption> -->
+                                    </figure>
+                                    <!-- <p class="mb-5">
                                         Aenean sodales lacus est, at ultricies augue ele ifend sit amet.
                                         <ins>Be yourself</ins> everyone else is already taken, sem mi placerat felis, ac suscip ligula ex id metus.
                                         Vivamus aliquet sit amet nisi non faucibus. Orci varius natoque penatibus et magnis dis parturient montes.
@@ -72,8 +85,9 @@
                                         <footer class="ml-16 text-base">
                                             Quote by <cite title="Source Title">Ari Budin</cite>
                                         </footer>
-                                    </blockquote>
+                                    </blockquote> -->
 
+                                    <!--Author-->
                                     <div class="relative flex flex-row items-center justify-between overflow-hidden bg-gray-100 dark:bg-gray-900 dark:bg-opacity-20 mt-12 mb-2 px-6 py-2">
                                         <div class="my-4 text-sm">
                                             <!--author-->
@@ -188,12 +202,78 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Author from '@public/posts/Author.vue';
+import { ref,onMounted } from 'vue';
+import axios from 'axios';
+import { useRoute } from 'vue-router';
+import { Key } from 'lucide-vue-next';
 
-export default {
-    components: {
-        Author,
-    },
-};
+let imgPath=import.meta.env.VITE_IMAGE_PATH;
+
+const route = useRoute();
+
+const post=ref({
+     title: '',
+      // slug: data?.slug ?? '',
+      body: '',
+      category: [],
+      thumbnail:'',
+      created_at:'',
+      tags: [],
+      author: [],
+      images:[]
+});
+
+// for edit post
+onMounted(() => {
+    fetchPost(route.params.id)
+})
+
+
+const fetchPost = async (id) => {
+  try {
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/articles/${id}`)
+
+    post.value = {
+      title: data?.title ?? '',
+      // slug: data?.slug ?? '',
+      body: data?.body ?? '',
+      category:data?.category ?? [],
+      thumbnail: data?.thumbnail ?? '',
+      created_at:data.created_at,
+      tags:data.tags ?? [],
+      author:data.author ?? [],
+      images:data.images ?? []
+    }
+
+
+    // Images preview (array of image URLs)
+//     oldImages.value = Array.isArray(data?.images)
+//   ? data.images.map(file => ({
+//       id: file.id,
+//       image_path: file.image_path,
+//       url: `${import.meta.env.VITE_IMAGE_PATH}/${file.image_path}`
+//     }))
+//   : []
+
+    // Tags selected (for multi-select)
+    // selectedTags.value = Array.isArray(data?.tags)
+    //   ? data.tags.map(tag => ({
+    //       value: tag?.value ?? tag?.id ?? null,
+    //       label: tag?.label ?? tag?.name ?? '',
+    //     }))
+    //   : []
+
+  } catch (error) {
+    console.error('Failed to fetch post:', error)
+    // Optional: show error toast or message
+  }
+}
+
+// export default {
+//     components: {
+//         Author,
+//     },
+// };
 </script>

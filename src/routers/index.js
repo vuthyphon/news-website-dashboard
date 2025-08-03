@@ -15,8 +15,8 @@ const routes = [
         component: () => import('@/views/public/home/HomePage.vue'),
       },
       {
-        path: 'detail',
-        name: 'about',
+        path: 'article/detail/:id',
+        name: 'deatail-post',
         component: () => import('@public/posts/PostDetail.vue'),
       },
 
@@ -31,7 +31,7 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       {
-        path: '', // /admin
+        path: 'dashboard', // /admin
         name: 'dashboard',
         component: () => import('@admin/Ecommerce.vue'),
       },
@@ -48,22 +48,46 @@ const routes = [
       {
         path: '/posts/:id/edit',
         name: 'PostEdit',
-        component: () => import('@admin/Posts/AddPost.vue'),
+        component: () => import('@admin/Posts/UpdatePost.vue'),
       },
       {
-      path: '/calendar',
-      name: 'Calendar',
-      component: () => import('@admin/Others/Calendar.vue'),
-      meta: {
-        title: 'Calendar',
+        path: '/categories',
+        name: 'Categories',
+        component: () => import('@admin/Category/AllCategory.vue'),
+        meta: {
+          title: 'Calendar',
+        },
       },
-    },
+      {
+        path: '/tags',
+        name: 'Tags',
+        component: () => import('@admin/Tags/AllTag.vue'),
+        meta: {
+          title: 'Tags',
+        },
+      },
+      {
+        path: '/calendar',
+        name: 'Calendar',
+        component: () => import('@admin/Others/Calendar.vue'),
+        meta: {
+          title: 'Calendar',
+        },
+      },
     {
       path: '/profile',
       name: 'Profile',
-      component: () => import('@admin/Others/UserProfile.vue'),
+      component: () => import('@admin/Users/UserProfile.vue'),
       meta: {
         title: 'Profile',
+      },
+    },
+    {
+      path: '/users',
+      name: 'Users',
+      component: () => import('@admin/Users/AllUsers.vue'),
+      meta: {
+        title: 'All Users',
       },
     },
     {

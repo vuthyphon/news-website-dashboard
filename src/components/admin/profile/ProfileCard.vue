@@ -10,17 +10,17 @@
           </div>
           <div class="order-3 xl:order-2">
             <h4
-              class="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left"
+              class="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left capitalize"
             >
-              Musharof Chowdhury
+             {{ userInfo.name }}
             </h4>
-            <div
+            <!-- <div
               class="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left"
             >
               <p class="text-sm text-gray-500 dark:text-gray-400">Team Manager</p>
               <div class="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
               <p class="text-sm text-gray-500 dark:text-gray-400">Arizona, United States</p>
-            </div>
+            </div> -->
           </div>
           <div class="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">
             <a
@@ -316,6 +316,11 @@ import { ref } from 'vue'
 import Modal from './Modal.vue'
 
 const isProfileInfoModal = ref(false)
+
+const props = defineProps({
+
+  userInfo: Object // only used in edit
+})
 
 const saveProfile = () => {
   // Implement save profile logic here
