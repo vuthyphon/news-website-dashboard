@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-screen-xl container mx-auto px-4">
-         <Loading :active="isLoading" :can-cancel="false" :is-full-page="true" />
+         <Loading :active="isLoading" :can-cancel="false" :is-full-page="true" :opacity="0.9" />
         <div class="bg-gray-50 py-20">
             <div class="xl:container mx-auto px-3 sm:px-4 xl:px-2">
                 <div class="flex flex-row flex-wrap">

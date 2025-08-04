@@ -1,6 +1,6 @@
 <template>
 <div class="max-w-screen-xl mx-auto px-4">
-  <Loading :active="isLoading" :can-cancel="false" :is-full-page="true" />
+  <Loading :active="isLoading" :can-cancel="false" :is-full-page="true" :opacity="0.9" />
 
 
   <div class="flex justify-between mt-20">
