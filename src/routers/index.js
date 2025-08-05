@@ -31,6 +31,11 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
     children: [
       {
+        path: '/', // /admin
+        name: 'dashboard',
+        component: () => import('@admin/Ecommerce.vue'),
+      },
+      {
         path: 'dashboard', // /admin
         name: 'dashboard',
         component: () => import('@admin/Ecommerce.vue'),
@@ -46,7 +51,7 @@ const routes = [
         component: () => import('@admin/Posts/AddPost.vue'),
       },
       {
-        path: '/posts/:id/edit',
+        path: 'posts/:id/edit',
         name: 'PostEdit',
         component: () => import('@admin/Posts/UpdatePost.vue'),
       },

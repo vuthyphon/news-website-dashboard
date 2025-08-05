@@ -14,7 +14,7 @@
       </svg>
     </button>
 
-    <div class="hidden md:flex items-center space-x-6">
+    <div class="hidden md:flex items-center space-x-6 lg:items-baseline xl:items-baseline">
       <router-link to="/" class="text-blue-700">Home</router-link>
       <router-link to="/detail" class="text-gray-700 dark:text-white hover:text-blue-500">About</router-link>
       <router-link to="#" class="text-gray-700 dark:text-white hover:text-blue-500">Services</router-link>
@@ -22,8 +22,6 @@
     </div>
   </div>
 </nav>
-
-
   <!-- Sidebar Overlay -->
   <div v-show="isMenuOpen" @click="toggleMenu" class="fixed inset-0 bg-gray-100 bg-opacity-10 z-30 md:hidden"></div>
 
